@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kokomo Community Events - KAA Calendar Scraper</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-section">
+                    <h1><i class="fas fa-calendar-alt"></i> Kokomo Community Events</h1>
+                    <p class="subtitle">Powered by Kokomo Art Association</p>
+                </div>
+                <div class="header-stats">
+                    <div class="stat-item">
+                        <span class="stat-number" id="totalEvents">0</span>
+                        <span class="stat-label">Total Events</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="todayEvents">0</span>
+                        <span class="stat-label">Today</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="kaaEvents">0</span>
+                        <span class="stat-label">KAA Relevant</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav-tabs">
+        <div class="container">
+            <div class="tabs-container">
+                <button class="tab-btn active" data-view="list">
+                    <i class="fas fa-list"></i> List View
+                </button>
+                <button class="tab-btn" data-view="calendar">
+                    <i class="fas fa-calendar"></i> Calendar View
+                </button>
+                <div class="nav-actions">
+                    <button class="btn btn--sm btn--outline" id="exportBtn">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <div class="content-layout">
+                <!-- Sidebar Filters -->
+                <aside class="sidebar">
+                    <div class="filter-section">
+                        <h3><i class="fas fa-filter"></i> Filters</h3>
+                        
+                        <!-- Search -->
+                        <div class="form-group">
+                            <label class="form-label" for="searchInput">Search Events</label>
+                            <input type="text" id="searchInput" class="form-control" placeholder="Search titles and descriptions...">
+                        </div>
+
+                        <!-- Date Range -->
+                        <div class="form-group">
+                            <label class="form-label" for="dateFilter">Date Range</label>
+                            <select id="dateFilter" class="form-control">
+                                <option value="all">All Dates</option>
+                                <option value="today">Today</option>
+                                <option value="week">Next 7 Days</option>
+                                <option value="month">This Month</option>
+                                <option value="upcoming">Upcoming Only</option>
+                            </select>
+                        </div>
+
+                        <!-- Category Filter -->
+                        <div class="form-group">
+                            <label class="form-label" for="categoryFilter">Category</label>
+                            <select id="categoryFilter" class="form-control">
+                                <option value="all">All Categories</option>
+                            </select>
+                        </div>
+
+                        <!-- Source Filter -->
+                        <div class="form-group">
+                            <label class="form-label" for="sourceFilter">Source</label>
+                            <select id="sourceFilter" class="form-control">
+                                <option value="all">All Sources</option>
+                            </select>
+                        </div>
+
+                        <!-- KAA Relevant -->
+                        <div class="form-group">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="kaaFilter">
+                                <span class="checkmark"></span>
+                                Show Only KAA Relevant Events
+                            </label>
+                        </div>
+
+                        <!-- Clear Filters -->
+                        <button class="btn btn--secondary btn--sm btn--full-width" id="clearFilters">
+                            <i class="fas fa-times"></i> Clear All Filters
+                        </button>
+                    </div>
+
+                    <!-- Today's Highlights -->
+                    <div class="highlights-section">
+                        <h4><i class="fas fa-star"></i> Today's Events</h4>
+                        <div id="todayHighlights" class="today-events">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Main Content Area -->
+                <div class="main-area">
+                    <!-- List View -->
+                    <div id="listView" class="view-container active">
+                        <div class="view-header">
+                            <div class="results-info">
+                                <span id="resultsCount">0 events found</span>
+                            </div>
+                            <div class="sort-controls">
+                                <label for="sortBy">Sort by:</label>
+                                <select id="sortBy" class="form-control">
+                                    <option value="date">Date</option>
+                                    <option value="title">Title</option>
+                                    <option value="category">Category</option>
+                                    <option value="source">Source</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="eventsList" class="events-grid">
+                            <!-- Event cards populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Calendar View -->
+                    <div id="calendarView" class="view-container">
+                        <div class="calendar-header">
+                            <button id="prevMonth" class="btn btn--outline btn--sm">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <h3 id="calendarTitle">July 2025</h3>
+                            <button id="nextMonth" class="btn btn--outline btn--sm">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                        <div id="calendarGrid" class="calendar-grid">
+                            <!-- Calendar populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Event Details Modal -->
+    <div id="eventModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle"></h2>
+                <button class="modal-close" id="closeModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent">
+                    <!-- Event details populated by JavaScript -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn--secondary" id="closeModalBtn">Close</button>
+                <a href="#" target="_blank" class="btn btn--primary" id="viewSourceLink">
+                    <i class="fas fa-external-link-alt"></i> View on Source
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading indicator -->
+    <div id="loadingIndicator" class="loading-overlay">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Loading events...</p>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
